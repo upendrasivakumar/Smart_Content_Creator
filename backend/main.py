@@ -7,9 +7,16 @@ load_dotenv()
 
 app = FastAPI()
 
-client = Groq(
-    api_key=os.getenv("api_key")
-)
+api_key = os.getenv("GROQ_API_KEY")
+
+if not api_key:
+    raise Exception("GROQ_API_KEY not found")
+
+client = Groq(api_key=api_key)
+
+@app.get("/")
+def home():
+    return {"message": "API Running"}
 
 @app.post("/generate")
 def generate_content(
@@ -18,7 +25,6 @@ def generate_content(
     content_type: str,
     tone: str
 ):
-
     prompt = f"""
     Generate a {content_type}
 
